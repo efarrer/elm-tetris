@@ -1,0 +1,34 @@
+.center {
+    margin: auto;
+    width: 500px;
+    height: 500px;
+    padding: 0px;
+}
+
+.game {
+    display: table;
+}
+
+.title {
+    font-size: 4em;
+    text-align: center;
+    display: table-caption;
+}
+
+.group {
+    display: table-row-group;
+}
+
+.arena {
+    display: table-row;
+}
+
+.board {
+    display: table-cell;
+}
+
+.next {
+    display: table-cell;
+    vertical-align: top;
+    padding-left: 25px;
+}
