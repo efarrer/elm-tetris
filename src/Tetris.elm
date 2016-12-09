@@ -1,6 +1,6 @@
 module Tetris exposing (..)
 
-import Html exposing (Html, div, text, section, header)
+import Html exposing (Html, div, text, section, header, h1)
 import Html.Attributes exposing (class)
 import Collage exposing (..)
 import Color exposing (..)
@@ -236,26 +236,45 @@ view model =
                                             []
 
                                         Just piece ->
-                                            (viewPiece ( width, height ) piece)
+                                            (viewPiece ( width, height ) 0.0 piece)
                         ]
-                    , div [ class "next" ]
-                        [ case model.nextPiece of
-                            Nothing ->
-                                Html.text ""
-
-                            Just piece ->
-                                let
-                                    size =
-                                        4
-                                in
-                                    Element.toHtml <|
-                                        collage (size * blockSizeInPixels) (size * blockSizeInPixels) <|
-                                            List.append [] (viewPiece ( size, size ) { piece | x = (size // 2) - 1, y = size - 1 })
-                        ]
+                    , div [ class "panel" ]
+                        (viewNextPiece model.nextPiece)
                     ]
                 ]
             ]
         ]
+
+
+viewNextPiece : Maybe Piece -> List (Html Msg)
+viewNextPiece piece =
+    [ div [ class "next-box" ]
+        [ h1 [ class "sub-title" ] [ Html.text "next" ]
+        , case piece of
+            Nothing ->
+                Html.text ""
+
+            Just piece ->
+                let
+                    displayWidth =
+                        4
+
+                    displayHeight =
+                        2
+
+                    rightShift =
+                        case (pieceWidth piece) of
+                            3 ->
+                                (toFloat blockSizeInPixels) / 2.0
+
+                            default ->
+                                0.0
+                in
+                    Element.toHtml <|
+                        collage (displayWidth * blockSizeInPixels) (displayHeight * blockSizeInPixels) <|
+                            viewPiece ( displayWidth, displayHeight ) rightShift { piece | x = (displayWidth // 2) - 1, y = displayHeight - 1 }
+        ]
+    ]
 
 
 eliminateCompleteRows : Board -> Board
@@ -434,6 +453,29 @@ boardFilled board coord =
     boardColor board coord /= backgroundColor
 
 
+pieceWidth : Piece -> Int
+pieceWidth piece =
+    let
+        xs =
+            List.map (\( x, y ) -> x) (pieceCoords { piece | x = 0 })
+
+        max =
+            List.maximum xs
+
+        min =
+            List.minimum xs
+    in
+        case ( min, max ) of
+            ( Nothing, _ ) ->
+                0
+
+            ( _, Nothing ) ->
+                0
+
+            ( Just min, Just max ) ->
+                1 + (max - min)
+
+
 pieceCoords : Piece -> List ( Int, Int )
 pieceCoords piece =
     let
@@ -492,14 +534,18 @@ pieceCoords piece =
             )
 
 
-viewPiece : ( Int, Int ) -> Piece -> List Form
-viewPiece ( w, h ) piece =
+viewPiece : ( Int, Int ) -> Float -> Piece -> List Form
+viewPiece ( w, h ) xshift piece =
     List.map
         (\( x, y ) ->
-            Collage.move (transform ( x, y ) ( w, h )) <|
-                filled piece.color <|
-                    Collage.square <|
-                        toFloat blockSizeInPixels
+            let
+                ( xcoord, ycoord ) =
+                    transform ( x, y ) ( w, h )
+            in
+                Collage.move ( xcoord + xshift, ycoord ) <|
+                    filled piece.color <|
+                        Collage.square <|
+                            toFloat blockSizeInPixels
         )
         (pieceCoords piece)
 

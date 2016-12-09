@@ -27,8 +27,23 @@
     display: table-cell;
 }
 
-.next {
+.panel {
     display: table-cell;
     vertical-align: top;
     padding-left: 25px;
+    padding-right: 25px;
+    background-color: lightgrey;
+}
+
+.next-box {
+}
+
+.title {
+    font-size: 3em;
+    text-align: center;
+}
+
+.sub-title {
+    margin-top: 0px;
+    text-align: center;
 }
