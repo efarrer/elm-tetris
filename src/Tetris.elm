@@ -104,13 +104,13 @@ keyMap keycode =
             Left
 
         38 ->
-            ClockWise
+            CounterClockWise
 
         39 ->
             Right
 
         40 ->
-            CounterClockWise
+            ClockWise
 
         default ->
             IgnoredKey
