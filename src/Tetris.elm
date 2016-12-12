@@ -226,30 +226,37 @@ view model =
             , div [ class "group" ]
                 [ div [ class "arena" ]
                     [ div [ class "board" ]
-                        [ Element.toHtml <|
-                            collage (width * blockSizeInPixels) (height * blockSizeInPixels) <|
-                                List.append
-                                    (viewBlocks model.board)
-                                <|
-                                    case model.piece of
-                                        Nothing ->
-                                            []
-
-                                        Just piece ->
-                                            (viewPiece ( width, height ) 0.0 piece)
-                        ]
+                        (viewBoard model.board model.piece)
                     , div [ class "panel" ]
-                        (viewNextPiece model.nextPiece)
+                        [ (viewNextPiece model.nextPiece)
+                        , viewLegend
+                        ]
                     ]
                 ]
             ]
         ]
 
 
-viewNextPiece : Maybe Piece -> List (Html Msg)
+viewBoard : Board -> Maybe Piece -> List (Html Msg)
+viewBoard board piece =
+    [ Element.toHtml <|
+        collage (width * blockSizeInPixels) (height * blockSizeInPixels) <|
+            List.append
+                (viewBlocks board)
+            <|
+                case piece of
+                    Nothing ->
+                        []
+
+                    Just piece ->
+                        (viewPiece ( width, height ) 0.0 piece)
+    ]
+
+
+viewNextPiece : Maybe Piece -> Html Msg
 viewNextPiece piece =
-    [ div [ class "next-box" ]
-        [ h1 [ class "sub-title" ] [ Html.text "next" ]
+    div [ class "next-box" ]
+        [ h1 [ class "sub-title" ] [ Html.text "next block" ]
         , case piece of
             Nothing ->
                 Html.text ""
@@ -274,7 +281,17 @@ viewNextPiece piece =
                         collage (displayWidth * blockSizeInPixels) (displayHeight * blockSizeInPixels) <|
                             viewPiece ( displayWidth, displayHeight ) rightShift { piece | x = (displayWidth // 2) - 1, y = displayHeight - 1 }
         ]
-    ]
+
+
+viewLegend : Html Msg
+viewLegend =
+    div [ class "legend" ] <|
+        List.append
+            [ h1 [ class "sub-title" ] [ Html.text "legend" ] ]
+        <|
+            List.map
+                (\text -> div [ class "legend-item" ] [ Html.text text ])
+                [ "←: shift left", "→: shift right", "↑: rotate left", "↓: rotate right", "―: drop" ]
 
 
 eliminateCompleteRows : Board -> Board

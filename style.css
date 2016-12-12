@@ -35,6 +35,17 @@
     background-color: lightgrey;
 }
 
+.legend {
+    padding-top: 50px;
+    display: table;
+    font-size: 1em;
+    font-weight: bold;
+}
+
+.legend-item {
+    display: table-row;
+}
+
 .next-box {
 }
 
